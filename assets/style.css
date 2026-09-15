@@ -1,0 +1,519 @@
+/* ==========================================================================
+   پنل آپلود فایل — استایل اصلی
+   ========================================================================== */
+
+/* ---------- فونت وزیرمتن (محلی) ---------- */
+@font-face{font-family:Vazirmatn;src:url('fonts/Vazirmatn-Regular.woff2') format('woff2');font-weight:400;font-style:normal;font-display:swap}
+@font-face{font-family:Vazirmatn;src:url('fonts/Vazirmatn-Medium.woff2') format('woff2');font-weight:500;font-style:normal;font-display:swap}
+@font-face{font-family:Vazirmatn;src:url('fonts/Vazirmatn-SemiBold.woff2') format('woff2');font-weight:600;font-style:normal;font-display:swap}
+@font-face{font-family:Vazirmatn;src:url('fonts/Vazirmatn-Bold.woff2') format('woff2');font-weight:700;font-style:normal;font-display:swap}
+@font-face{font-family:Vazirmatn;src:url('fonts/Vazirmatn-Black.woff2') format('woff2');font-weight:900;font-style:normal;font-display:swap}
+
+/* ---------- متغیرها ---------- */
+:root{
+    --accent:#6c5ce7;
+    --accent-2:#00d2ff;
+    --accent-3:#ff5e9c;
+    --ok:#22c55e;
+    --warn:#f59e0b;
+    --err:#ef4444;
+
+    --bg:#080a16;
+    --bg-2:#0d1024;
+    --surface:rgba(255,255,255,.045);
+    --surface-2:rgba(255,255,255,.07);
+    --border:rgba(255,255,255,.09);
+    --border-strong:rgba(255,255,255,.16);
+    --text:#eaeaf5;
+    --text-dim:#a9adc7;
+    --text-mute:#6f7391;
+
+    --radius:22px;
+    --radius-sm:14px;
+    --shadow:0 24px 60px -24px rgba(0,0,0,.75);
+    --glow:0 0 0 1px rgba(255,255,255,.05), 0 22px 70px -30px var(--accent);
+
+    --k-file:#64748b; --k-image:#0ea5e9; --k-video:#8b5cf6; --k-audio:#f472b6;
+    --k-pdf:#ef4444; --k-archive:#f59e0b; --k-doc:#3b82f6; --k-sheet:#22c55e;
+    --k-app:#14b8a6; --k-code:#a855f7;
+
+    --ease:cubic-bezier(.16,1,.3,1);
+    --font:Vazirmatn, 'Segoe UI', Tahoma, system-ui, -apple-system, sans-serif;
+}
+[data-theme="light"]{
+    --bg:#eef1fb;
+    --bg-2:#ffffff;
+    --surface:rgba(255,255,255,.72);
+    --surface-2:rgba(255,255,255,.9);
+    --border:rgba(16,20,50,.09);
+    --border-strong:rgba(16,20,50,.18);
+    --text:#141833;
+    --text-dim:#4b517a;
+    --text-mute:#8489a8;
+    --shadow:0 24px 60px -30px rgba(30,35,80,.35);
+    --glow:0 0 0 1px rgba(255,255,255,.6), 0 22px 70px -34px var(--accent);
+}
+
+/* ---------- ریست ---------- */
+*,*::before,*::after{box-sizing:border-box}
+html,body{margin:0;padding:0;min-height:100%}
+html{-webkit-text-size-adjust:100%}
+body{
+    font-family:var(--font);
+    background:var(--bg);
+    color:var(--text);
+    line-height:1.7;
+    overflow-x:hidden;
+    padding-bottom:env(safe-area-inset-bottom);
+    transition:background .5s var(--ease), color .35s var(--ease);
+}
+img,svg{max-width:100%}
+a{color:inherit;text-decoration:none}
+button,input{font:inherit;color:inherit}
+button{cursor:pointer;border:0;background:none}
+h1,h2,h3,p{margin:0}
+::selection{background:color-mix(in srgb, var(--accent) 45%, transparent);color:#fff}
+
+::-webkit-scrollbar{width:11px;height:11px}
+::-webkit-scrollbar-track{background:transparent}
+::-webkit-scrollbar-thumb{
+    background:linear-gradient(var(--accent),var(--accent-2));
+    border:3px solid var(--bg);border-radius:99px;
+}
+::-webkit-scrollbar-thumb:hover{background:linear-gradient(var(--accent-2),var(--accent))}
+
+/* ==========================================================================
+   پس‌زمینه‌ی متحرک
+   ========================================================================== */
+.bg{position:fixed;inset:0;z-index:-1;overflow:hidden;background:
+    radial-gradient(1200px 700px at 80% -10%, color-mix(in srgb, var(--accent) 22%, transparent), transparent 60%),
+    radial-gradient(900px 600px at 0% 100%, color-mix(in srgb, var(--accent-2) 14%, transparent), transparent 60%),
+    linear-gradient(180deg, var(--bg), var(--bg-2) 120%);
+}
+.blob{position:absolute;display:block;border-radius:50%;filter:blur(70px);opacity:.5;mix-blend-mode:screen}
+[data-theme="light"] .blob{opacity:.32;mix-blend-mode:normal;filter:blur(80px)}
+.blob-1{width:46vw;height:46vw;left:-8vw;top:-10vw;background:radial-gradient(circle at 30% 30%, var(--accent), transparent 70%);animation:drift1 26s var(--ease) infinite}
+.blob-2{width:38vw;height:38vw;right:-6vw;top:6vw;background:radial-gradient(circle at 60% 40%, var(--accent-2), transparent 70%);animation:drift2 32s var(--ease) infinite}
+.blob-3{width:42vw;height:42vw;left:22vw;bottom:-16vw;background:radial-gradient(circle at 50% 50%, var(--accent-3), transparent 70%);animation:drift3 38s var(--ease) infinite}
+@keyframes drift1{0%,100%{transform:translate3d(0,0,0) scale(1)}33%{transform:translate3d(8vw,5vh,0) scale(1.12)}66%{transform:translate3d(4vw,-4vh,0) scale(.95)}}
+@keyframes drift2{0%,100%{transform:translate3d(0,0,0) scale(1.05)}50%{transform:translate3d(-7vw,8vh,0) scale(.92)}}
+@keyframes drift3{0%,100%{transform:translate3d(0,0,0) scale(.95)}50%{transform:translate3d(-5vw,-7vh,0) scale(1.15)}}
+
+.grid{
+    position:absolute;inset:0;
+    background-image:linear-gradient(rgba(255,255,255,.06) 1px,transparent 1px),
+                     linear-gradient(90deg,rgba(255,255,255,.06) 1px,transparent 1px);
+    background-size:64px 64px;
+    mask-image:radial-gradient(circle at 50% 20%, #000 0%, transparent 72%);
+    -webkit-mask-image:radial-gradient(circle at 50% 20%, #000 0%, transparent 72%);
+    animation:gridPan 60s linear infinite;
+}
+[data-theme="light"] .grid{background-image:linear-gradient(rgba(20,24,60,.06) 1px,transparent 1px),linear-gradient(90deg,rgba(20,24,60,.06) 1px,transparent 1px)}
+@keyframes gridPan{from{background-position:0 0,0 0}to{background-position:64px 128px,128px 64px}}
+.noise{
+    position:absolute;inset:0;opacity:.32;pointer-events:none;
+    background-image:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='160' height='160'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='.85' numOctaves='3'/%3E%3C/filter%3E%3Crect width='160' height='160' filter='url(%23n)' opacity='.35'/%3E%3C/svg%3E");
+}
+
+/* ==========================================================================
+   نوار بالا
+   ========================================================================== */
+.topbar{
+    position:sticky;top:0;z-index:40;
+    display:flex;align-items:center;justify-content:space-between;gap:14px;
+    padding:14px clamp(14px,4vw,42px);
+    backdrop-filter:blur(16px) saturate(140%);
+    -webkit-backdrop-filter:blur(16px) saturate(140%);
+    background:linear-gradient(180deg,color-mix(in srgb,var(--bg) 78%,transparent),transparent);
+    border-bottom:1px solid var(--border);
+    animation:slideDown .7s var(--ease) both;
+}
+@keyframes slideDown{from{opacity:0;transform:translateY(-18px)}to{opacity:1;transform:none}}
+.brand{display:flex;align-items:center;gap:12px;min-width:0}
+.logo{
+    display:grid;place-items:center;width:44px;height:44px;border-radius:14px;color:#fff;
+    background:linear-gradient(135deg,var(--accent),var(--accent-2));
+    box-shadow:0 12px 30px -12px var(--accent);
+    animation:logoPulse 4.5s var(--ease) infinite;
+}
+.logo svg{animation:arrowBob 2.6s var(--ease) infinite}
+@keyframes logoPulse{0%,100%{transform:translateY(0) rotate(0)}50%{transform:translateY(-4px) rotate(-4deg)}}
+@keyframes arrowBob{0%,100%{transform:translateY(1.5px)}50%{transform:translateY(-2.5px)}}
+.brand-text{display:flex;flex-direction:column;min-width:0}
+.brand-text strong{font-weight:800;font-size:clamp(15px,2.4vw,19px);letter-spacing:-.2px}
+.brand-text small{color:var(--text-mute);font-size:12px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.topbar-actions{display:flex;align-items:center;gap:8px;flex-wrap:wrap;justify-content:flex-end}
+.pill{
+    display:inline-flex;align-items:center;gap:6px;
+    padding:7px 13px;border-radius:99px;font-size:12.5px;font-weight:600;color:var(--text-dim);
+    background:var(--surface);border:1px solid var(--border);
+    transition:transform .3s var(--ease),color .3s,border-color .3s;
+}
+.pill:hover{transform:translateY(-2px);color:var(--text);border-color:var(--border-strong)}
+.pill svg{color:var(--accent-2)}
+.icon-btn{
+    position:relative;display:grid;place-items:center;width:40px;height:40px;border-radius:13px;
+    background:var(--surface);border:1px solid var(--border);color:var(--text-dim);
+    transition:transform .35s var(--ease),color .3s,background .3s,border-color .3s;
+}
+.icon-btn:hover{transform:translateY(-2px) rotate(-8deg);color:var(--text);border-color:var(--border-strong);background:var(--surface-2)}
+.icon-btn:active{transform:scale(.94)}
+.icon-btn .i-sun{display:none}
+[data-theme="light"] .icon-btn .i-sun{display:block}
+[data-theme="light"] .icon-btn .i-moon{display:none}
+
+/* ==========================================================================
+   چیدمان و کارت‌ها
+   ========================================================================== */
+.wrap{
+    max-width:1080px;margin:0 auto;padding:clamp(18px,3.6vw,40px) clamp(12px,3vw,28px) 60px;
+    display:flex;flex-direction:column;gap:26px;
+}
+.card{
+    position:relative;border-radius:var(--radius);
+    background:var(--surface);border:1px solid var(--border);
+    backdrop-filter:blur(22px) saturate(150%);
+    -webkit-backdrop-filter:blur(22px) saturate(150%);
+    box-shadow:var(--shadow);
+    padding:clamp(16px,3vw,28px);
+    animation:cardIn .8s var(--ease) both;
+}
+.upload-card{animation-delay:.06s}
+.recent-card{animation-delay:.14s}
+@keyframes cardIn{from{opacity:0;transform:translateY(26px) scale(.985)}to{opacity:1;transform:none}}
+.card::after{
+    content:"";position:absolute;inset:0;border-radius:inherit;pointer-events:none;
+    background:linear-gradient(120deg,transparent 30%,rgba(255,255,255,.06) 45%,transparent 60%);
+    background-size:280% 100%;background-position:200% 0;
+}
+.card:hover::after{animation:sheen 1.5s var(--ease)}
+@keyframes sheen{from{background-position:200% 0}to{background-position:-80% 0}}
+.card-head{display:flex;align-items:center;justify-content:space-between;gap:12px;margin-bottom:16px}
+.card-head h2{display:flex;align-items:center;gap:9px;font-size:16.5px;font-weight:700}
+.card-head h2 svg{color:var(--accent-2)}
+
+/* ==========================================================================
+   ناحیه‌ی رها کردن فایل
+   ========================================================================== */
+.dropzone{
+    position:relative;border-radius:var(--radius);
+    padding:clamp(22px,5vw,46px) clamp(14px,4vw,40px);
+    text-align:center;outline:none;
+    background:
+        radial-gradient(700px 300px at 50% 0%, color-mix(in srgb, var(--accent) 12%, transparent), transparent 70%),
+        var(--surface-2);
+    transition:transform .5s var(--ease),background .4s;
+    cursor:pointer;
+}
+.dropzone:hover{transform:translateY(-3px)}
+.dropzone:focus-visible{box-shadow:0 0 0 3px color-mix(in srgb, var(--accent) 55%, transparent)}
+.dz-border{position:absolute;inset:0;width:100%;height:100%;pointer-events:none;overflow:visible}
+.dz-border rect{
+    fill:none;stroke:url(#none);stroke:var(--accent);stroke-width:2;
+    stroke-dasharray:14 10;stroke-linecap:round;
+    animation:ants 22s linear infinite;opacity:.55;
+    transition:opacity .4s,stroke-width .4s;
+}
+@keyframes ants{to{stroke-dashoffset:-1000}}
+.dropzone:hover .dz-border rect,.dropzone:focus-visible .dz-border rect{opacity:.95;stroke-width:2.6;animation-duration:9s}
+.dropzone.dragging{
+    transform:scale(1.015);
+    background:radial-gradient(700px 340px at 50% 0%, color-mix(in srgb, var(--accent) 26%, transparent), transparent 72%), var(--surface-2);
+}
+.dropzone.dragging .dz-border rect{stroke:var(--accent-2);stroke-width:3;opacity:1;animation-duration:4s}
+.dz-inner{position:relative;z-index:1;display:flex;flex-direction:column;align-items:center;gap:14px}
+
+.dz-icon{position:relative;width:120px;height:120px;display:grid;place-items:center;color:var(--accent-2)}
+.cloud{color:var(--text-dim);animation:floatY 4.2s var(--ease) infinite}
+.dropzone:hover .cloud{color:var(--accent-2)}
+.dropzone:hover .arrow{animation:arrowPop .9s var(--ease) infinite}
+@keyframes floatY{0%,100%{transform:translateY(4px)}50%{transform:translateY(-7px)}}
+@keyframes arrowPop{0%{transform:translateY(4px);opacity:.6}60%{transform:translateY(-6px);opacity:1}100%{transform:translateY(4px);opacity:.6}}
+.ring{
+    position:absolute;inset:6px;border-radius:50%;border:1.5px solid color-mix(in srgb, var(--accent) 45%, transparent);
+    animation:ripple 3.2s var(--ease) infinite;
+}
+.ring-2{animation-delay:1.6s}
+@keyframes ripple{0%{transform:scale(.72);opacity:.9}100%{transform:scale(1.25);opacity:0}}
+.dropzone.dragging .ring{animation-duration:1.4s;border-color:var(--accent-2)}
+
+.dz-title{font-size:clamp(19px,3.6vw,27px);font-weight:800;letter-spacing:-.3px}
+.dz-sub{color:var(--text-dim);font-size:clamp(13px,2.3vw,15px);max-width:56ch}
+.dz-sub b{color:var(--text);font-weight:700}
+.dz-buttons{display:flex;gap:10px;flex-wrap:wrap;justify-content:center;margin-top:4px}
+.dz-hint{color:var(--text-mute);font-size:12.4px;max-width:58ch}
+.nojs-form{margin-top:10px;display:flex;gap:8px;justify-content:center;align-items:center;flex-wrap:wrap}
+/* وقتی جاوااسکریپت فعال است فرم بدون‌جاوااسکریپت پنهان می‌شود */
+.has-js .nojs-form{display:none}
+.nojs-form input[type=file]{max-width:230px;font-size:12px;color:var(--text-mute)}
+
+/* ==========================================================================
+   دکمه‌ها
+   ========================================================================== */
+.btn{
+    position:relative;display:inline-flex;align-items:center;gap:8px;
+    padding:11px 20px;border-radius:14px;font-weight:700;font-size:14px;
+    background:var(--surface-2);border:1px solid var(--border);color:var(--text);
+    overflow:hidden;isolation:isolate;
+    transition:transform .3s var(--ease),box-shadow .35s,border-color .3s,background .3s,opacity .3s;
+}
+.btn svg{flex:none}
+.btn:hover{transform:translateY(-2px);border-color:var(--border-strong)}
+.btn:active{transform:translateY(0) scale(.97)}
+.btn::before{
+    content:"";position:absolute;inset:0;z-index:-1;opacity:0;
+    background:linear-gradient(110deg,transparent 20%,rgba(255,255,255,.35) 50%,transparent 80%);
+    transform:translateX(-120%);transition:opacity .3s;
+}
+.btn:hover::before{opacity:1;animation:shine .9s var(--ease)}
+@keyframes shine{from{transform:translateX(-120%)}to{transform:translateX(120%)}}
+.btn-primary{
+    color:#fff;border-color:transparent;
+    background:linear-gradient(135deg,var(--accent),var(--accent-2));
+    box-shadow:0 16px 34px -18px var(--accent);
+}
+.btn-primary:hover{box-shadow:0 22px 44px -18px var(--accent-2)}
+.btn-ghost{background:transparent;color:var(--text-dim)}
+.btn-ghost:hover{color:var(--text);background:var(--surface)}
+.btn-mini{padding:7px 13px;font-size:12.5px;border-radius:11px;font-weight:600}
+.btn-mini.danger{color:#fff;border-color:transparent;background:linear-gradient(135deg,#ef4444,#f97316)}
+.btn[disabled]{opacity:.45;pointer-events:none}
+
+/* ==========================================================================
+   نوار پیشرفت
+   ========================================================================== */
+.progress{
+    position:relative;height:11px;border-radius:99px;overflow:hidden;
+    background:color-mix(in srgb, var(--text) 12%, transparent);
+    box-shadow:inset 0 1px 3px rgba(0,0,0,.25);
+}
+.progress.slim{height:8px}
+.progress .bar{
+    position:relative;display:block;height:100%;width:0;border-radius:99px;
+    background:linear-gradient(90deg,var(--accent),var(--accent-2) 55%,var(--accent-3));
+    background-size:200% 100%;
+    box-shadow:0 0 18px -2px color-mix(in srgb, var(--accent) 70%, transparent);
+    transition:width .35s var(--ease);
+}
+.progress .bar::after{
+    content:"";position:absolute;inset:0;border-radius:inherit;
+    background:linear-gradient(90deg,transparent,rgba(255,255,255,.55),transparent);
+    transform:translateX(-100%);
+}
+.progress.active .bar{animation:flow 2.4s linear infinite}
+.progress.active .bar::after{animation:shimmer 1.35s linear infinite}
+@keyframes flow{to{background-position:200% 0}}
+@keyframes shimmer{to{transform:translateX(100%)}}
+.progress.done .bar{background:linear-gradient(90deg,#16a34a,#22c55e);box-shadow:0 0 20px -2px rgba(34,197,94,.6)}
+.progress.failed .bar{background:linear-gradient(90deg,#b91c1c,#ef4444)}
+.progress.paused .bar{background:linear-gradient(90deg,#a16207,#f59e0b);animation-play-state:paused}
+
+/* ==========================================================================
+   نوار وضعیت گروهی
+   ========================================================================== */
+.batch-bar{
+    margin-top:18px;padding:14px 16px;border-radius:var(--radius-sm);
+    background:var(--surface);border:1px solid var(--border);
+    display:flex;flex-direction:column;gap:11px;
+    animation:cardIn .5s var(--ease) both;
+}
+.batch-info{display:flex;align-items:center;justify-content:space-between;gap:10px;flex-wrap:wrap}
+.batch-label{font-weight:700;font-size:13.5px}
+.batch-stats{display:flex;align-items:center;gap:8px;font-size:12.5px;color:var(--text-dim);font-variant-numeric:tabular-nums}
+.dot{width:4px;height:4px;border-radius:50%;background:currentColor;opacity:.45;display:inline-block}
+.batch-actions{display:flex;gap:8px;flex-wrap:wrap}
+
+/* ==========================================================================
+   آیتم آپلود
+   ========================================================================== */
+.upload-list{display:flex;flex-direction:column;gap:12px;margin-top:16px}
+.upload-item{
+    position:relative;display:grid;grid-template-columns:46px 1fr auto;gap:12px;align-items:center;
+    padding:13px 14px;border-radius:var(--radius-sm);
+    background:var(--surface);border:1px solid var(--border);
+    animation:itemIn .55s var(--ease) both;
+    transition:border-color .3s,transform .4s var(--ease),box-shadow .4s;
+    overflow:hidden;
+}
+@keyframes itemIn{from{opacity:0;transform:translateY(14px) scale(.98)}to{opacity:1;transform:none}}
+.upload-item:hover{border-color:var(--border-strong)}
+.upload-item.success{border-color:color-mix(in srgb,var(--ok) 45%,transparent);box-shadow:0 16px 40px -30px var(--ok)}
+.upload-item.error{border-color:color-mix(in srgb,var(--err) 50%,transparent)}
+.upload-item.done-anim{animation:pop .6s var(--ease)}
+@keyframes pop{0%{transform:scale(1)}45%{transform:scale(1.018)}100%{transform:scale(1)}}
+.upload-item .u-icon{
+    display:grid;place-items:center;width:46px;height:46px;border-radius:13px;color:#fff;
+    background:linear-gradient(140deg,color-mix(in srgb,var(--kind,var(--k-file)) 90%,#fff 8%),color-mix(in srgb,var(--kind,var(--k-file)) 60%,#000));
+    box-shadow:0 10px 24px -14px var(--kind,var(--k-file));
+    font-size:11px;font-weight:800;letter-spacing:.4px;text-transform:uppercase;
+}
+.upload-item .u-main{min-width:0;display:flex;flex-direction:column;gap:7px}
+.u-top{display:flex;align-items:baseline;gap:8px;flex-wrap:wrap}
+.u-name{font-weight:700;font-size:13.6px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;max-width:100%}
+.u-size{font-size:11.8px;color:var(--text-mute);font-variant-numeric:tabular-nums;flex:none}
+.u-status{margin-inline-start:auto;font-size:11.8px;color:var(--text-dim);font-variant-numeric:tabular-nums;display:flex;align-items:center;gap:6px;flex:none}
+.u-status .spin{
+    width:12px;height:12px;border-radius:50%;
+    border:2px solid color-mix(in srgb,var(--accent) 35%,transparent);border-top-color:var(--accent-2);
+    animation:spin .75s linear infinite;
+}
+@keyframes spin{to{transform:rotate(1turn)}}
+.u-status.ok{color:var(--ok)}
+.u-status.err{color:var(--err)}
+.u-status .check{display:inline-grid;place-items:center;width:16px;height:16px;border-radius:50%;background:var(--ok);color:#04120a;animation:checkPop .45s var(--ease)}
+@keyframes checkPop{0%{transform:scale(0) rotate(-40deg)}70%{transform:scale(1.2)}100%{transform:scale(1)}}
+.u-actions{display:flex;align-items:center;gap:6px;flex:none}
+.act{
+    display:grid;place-items:center;width:34px;height:34px;border-radius:11px;
+    color:var(--text-dim);background:var(--surface);border:1px solid var(--border);
+    transition:transform .3s var(--ease),color .25s,background .25s,border-color .25s;
+}
+.act:hover{transform:translateY(-2px);color:var(--text);border-color:var(--border-strong);background:var(--surface-2)}
+.act:active{transform:scale(.93)}
+.act.copy:hover{color:var(--accent-2)}
+.act.del:hover{color:var(--err);border-color:color-mix(in srgb,var(--err) 45%,transparent)}
+.act.mini{width:30px;height:30px;border-radius:10px}
+
+/* جعبه‌ی لینک پس از موفقیت */
+.link-box{
+    display:flex;align-items:center;gap:8px;grid-column:2 / -1;
+    padding:9px 11px;border-radius:12px;
+    background:color-mix(in srgb,var(--ok) 12%,transparent);
+    border:1px dashed color-mix(in srgb,var(--ok) 45%,transparent);
+    animation:reveal .5s var(--ease) both;
+}
+@keyframes reveal{from{opacity:0;transform:translateY(-8px);max-height:0}to{opacity:1;transform:none;max-height:90px}}
+.link-box input{
+    flex:1;min-width:0;background:transparent;border:0;outline:none;
+    font-size:12.6px;color:var(--text);direction:ltr;text-align:left;font-variant-numeric:tabular-nums;
+}
+.link-box .btn-mini{flex:none}
+.link-open{color:var(--accent-2);font-size:12.4px;font-weight:600}
+
+.upload-item .thumb-mini{
+    position:absolute;inset-inline-start:0;top:0;bottom:0;width:4px;
+    background:linear-gradient(var(--kind,var(--k-file)),transparent);opacity:.85;
+}
+
+/* ==========================================================================
+   فایل‌های اخیر
+   ========================================================================== */
+.recent-grid{
+    display:grid;gap:14px;
+    grid-template-columns:repeat(auto-fill,minmax(190px,1fr));
+}
+.file-card{
+    position:relative;display:flex;flex-direction:column;overflow:hidden;
+    border-radius:var(--radius-sm);background:var(--surface);border:1px solid var(--border);
+    transition:transform .45s var(--ease),border-color .3s,box-shadow .45s;
+    animation:itemIn .6s var(--ease) both;
+}
+.file-card:hover{transform:translateY(-6px);border-color:var(--border-strong);box-shadow:0 26px 50px -30px var(--accent)}
+.thumb{
+    position:relative;display:grid;place-items:center;aspect-ratio:16/10;overflow:hidden;
+    background:
+        radial-gradient(400px 160px at 50% 0%, color-mix(in srgb,var(--kind,var(--k-file)) 30%,transparent), transparent 70%),
+        color-mix(in srgb,var(--kind,var(--k-file)) 10%, transparent);
+    color:var(--kind,var(--k-file));
+}
+.thumb img{width:100%;height:100%;object-fit:cover;transition:transform .6s var(--ease);transform-origin:center}
+.file-card:hover .thumb img{transform:scale(1.07)}
+.kind-icon{display:grid;place-items:center;animation:floatY 5s var(--ease) infinite}
+.ext-badge{
+    position:absolute;inset-inline-start:8px;bottom:8px;
+    padding:3px 8px;border-radius:8px;font-size:10.5px;font-weight:800;letter-spacing:.5px;
+    background:color-mix(in srgb,var(--bg) 65%,transparent);color:var(--text-dim);
+    border:1px solid var(--border);backdrop-filter:blur(6px);
+}
+.file-card-body{padding:11px 12px 6px;display:flex;flex-direction:column;gap:3px;flex:1}
+.file-name{
+    font-size:13.2px;font-weight:700;
+    display:-webkit-box;-webkit-line-clamp:2;-webkit-box-orient:vertical;overflow:hidden;word-break:break-word;
+}
+.file-name:hover{color:var(--accent-2)}
+.file-meta{display:flex;align-items:center;gap:7px;font-size:11.5px;color:var(--text-mute);font-variant-numeric:tabular-nums}
+.file-card-actions{
+    display:flex;gap:6px;padding:9px 12px 12px;opacity:.75;transition:opacity .3s;
+}
+.file-card:hover .file-card-actions{opacity:1}
+.file-card-actions .act{width:32px;height:32px;border-radius:10px}
+.empty{
+    grid-column:1/-1;display:flex;flex-direction:column;align-items:center;gap:10px;
+    padding:34px 18px;border-radius:var(--radius-sm);border:1px dashed var(--border);
+    color:var(--text-mute);font-size:13.4px;text-align:center;
+}
+.empty svg{color:var(--accent);animation:floatY 5s var(--ease) infinite}
+.skeleton{
+    border-radius:var(--radius-sm);height:190px;border:1px solid var(--border);
+    background:linear-gradient(100deg,var(--surface) 30%,var(--surface-2) 50%,var(--surface) 70%);
+    background-size:220% 100%;animation:skelMove 1.4s linear infinite;
+}
+@keyframes skelMove{to{background-position:-220% 0}}
+
+/* ==========================================================================
+   توست و کانفتی
+   ========================================================================== */
+.toasts{position:fixed;inset-inline-start:18px;bottom:18px;z-index:90;display:flex;flex-direction:column;gap:10px;max-width:min(92vw,380px)}
+.toast{
+    position:relative;display:flex;align-items:flex-start;gap:10px;
+    padding:12px 14px;border-radius:14px;overflow:hidden;font-size:13px;font-weight:600;
+    background:color-mix(in srgb,var(--bg-2) 88%,transparent);color:var(--text);
+    border:1px solid var(--border);box-shadow:var(--shadow);
+    backdrop-filter:blur(14px);
+    animation:toastIn .5s var(--ease) both;
+}
+.toast.out{animation:toastOut .35s var(--ease) both}
+@keyframes toastIn{from{opacity:0;transform:translateY(18px) scale(.96)}to{opacity:1;transform:none}}
+@keyframes toastOut{to{opacity:0;transform:translateY(12px) scale(.96)}}
+.toast::after{content:"";position:absolute;inset-inline-start:0;bottom:0;height:3px;width:100%;background:var(--tint,var(--accent));transform-origin:right;animation:drain var(--dur,3.4s) linear forwards}
+@keyframes drain{from{transform:scaleX(1)}to{transform:scaleX(0)}}
+.toast .t-icon{display:grid;place-items:center;width:24px;height:24px;border-radius:8px;flex:none;background:color-mix(in srgb,var(--tint,var(--accent)) 22%,transparent);color:var(--tint,var(--accent))}
+.toast.ok{--tint:var(--ok)}
+.toast.err{--tint:var(--err)}
+.toast.warn{--tint:var(--warn)}
+
+.confetti{position:fixed;inset:0;pointer-events:none;z-index:95;overflow:hidden}
+.confetti i{
+    position:absolute;width:9px;height:14px;border-radius:2px;opacity:0;
+    animation:confettiFall var(--t,1.6s) cubic-bezier(.2,.6,.35,1) forwards;
+}
+@keyframes confettiFall{
+    0%{opacity:1;transform:translate3d(0,0,0) rotate(0)}
+    100%{opacity:0;transform:translate3d(var(--dx,0),var(--dy,220px),0) rotate(var(--rot,540deg))}
+}
+
+/* ==========================================================================
+   پاورقی و متفرقه
+   ========================================================================== */
+.footer{
+    display:flex;align-items:center;justify-content:center;gap:10px;flex-wrap:wrap;
+    color:var(--text-mute);font-size:12.4px;padding:6px 0 10px;text-align:center;
+}
+.badge-soft{
+    display:inline-flex;align-items:center;gap:6px;padding:3px 9px;border-radius:99px;
+    font-size:11.5px;font-weight:700;background:color-mix(in srgb,var(--accent) 18%,transparent);color:var(--text-dim);
+}
+.bounce-in{animation:bounceIn .6s var(--ease) both}
+@keyframes bounceIn{0%{opacity:0;transform:scale(.9)}60%{opacity:1;transform:scale(1.03)}100%{transform:scale(1)}}
+.shake{animation:shake .5s var(--ease)}
+@keyframes shake{10%,90%{transform:translateX(-2px)}20%,80%{transform:translateX(4px)}30%,50%,70%{transform:translateX(-6px)}40%,60%{transform:translateX(6px)}}
+
+/* ==========================================================================
+   واکنش‌گرایی
+   ========================================================================== */
+@media (max-width:640px){
+    .upload-item{grid-template-columns:40px 1fr;grid-template-areas:"icon main" "acts acts";row-gap:10px}
+    .upload-item .u-icon{grid-area:icon;width:40px;height:40px;border-radius:12px}
+    .upload-item .u-main{grid-area:main}
+    .u-actions{grid-area:acts;justify-content:flex-end}
+    .link-box{grid-column:1/-1}
+    .pill{font-size:11.6px;padding:6px 10px}
+    .brand-text small{display:none}
+    .toasts{inset-inline-start:12px;inset-inline-end:12px;bottom:12px}
+    .recent-grid{grid-template-columns:repeat(auto-fill,minmax(150px,1fr));gap:11px}
+}
+
+@media (prefers-reduced-motion:reduce){
+    *,*::before,*::after{animation-duration:.001ms !important;animation-iteration-count:1 !important;transition-duration:.06s !important}
+    .blob{display:none}
+}

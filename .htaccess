@@ -1,0 +1,69 @@
+# ============================================================
+#  پنل آپلود فایل — تنظیمات آپاچی
+# ============================================================
+Options -Indexes
+DirectoryIndex index.php index.html
+
+<IfModule mod_rewrite.c>
+    RewriteEngine On
+    # RewriteBase /            # اگر پنل داخل زیرپوشه است، مثلا: RewriteBase /upload/
+
+    # دسترسی مستقیم به هسته و داده‌ها بسته است
+    RewriteRule ^inc/ - [F,L]
+    RewriteRule ^storage/ - [F,L]
+
+    # فایل یا پوشه‌ی موجود را همان‌طور سرو کن
+    RewriteCond %{REQUEST_FILENAME} -f [OR]
+    RewriteCond %{REQUEST_FILENAME} -d
+    RewriteRule ^ - [L]
+
+    # آدرس‌های زیبا
+    RewriteRule ^d/([a-zA-Z0-9]+)/?$ download.php?id=$1 [L,QSA]
+    RewriteRule ^f/([a-zA-Z0-9]+)/?$ file.php?id=$1 [L,QSA]
+</IfModule>
+
+# ---------- محدودیت‌های آپلود تا ۲ گیگابایت (روی mod_php) ----------
+<IfModule mod_php.c>
+    php_value upload_max_filesize 2048M
+    php_value post_max_size 2048M
+    php_value memory_limit 512M
+    php_value max_execution_time 3600
+    php_value max_input_time 3600
+    php_value max_file_uploads 100
+</IfModule>
+<IfModule mod_php7.c>
+    php_value upload_max_filesize 2048M
+    php_value post_max_size 2048M
+    php_value memory_limit 512M
+    php_value max_execution_time 3600
+    php_value max_input_time 3600
+    php_value max_file_uploads 100
+</IfModule>
+<IfModule mod_php8.c>
+    php_value upload_max_filesize 2048M
+    php_value post_max_size 2048M
+    php_value memory_limit 512M
+    php_value max_execution_time 3600
+    php_value max_input_time 3600
+    php_value max_file_uploads 100
+</IfModule>
+
+# ---------- اگر از PHP-FPM استفاده می‌کنی، این‌ها را در .user.ini بگذار ----------
+# (فایل .user.ini همین پروژه از قبل آماده است)
+
+# ---------- امنیت ----------
+<IfModule mod_headers.c>
+    Header set X-Content-Type-Options "nosniff"
+    Header set Referrer-Policy "no-referrer-when-downgrade"
+</IfModule>
+
+# جلوگیری از اجرای فایل‌های غیرمجاز در ریشه‌ی پروژه
+<FilesMatch "\.(json|log|lock|part|building|bak|ini|md)$">
+    <IfModule mod_authz_core.c>
+        Require all denied
+    </IfModule>
+    <IfModule !mod_authz_core.c>
+        Order allow,deny
+        Deny from all
+    </IfModule>
+</FilesMatch>

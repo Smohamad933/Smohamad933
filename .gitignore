@@ -1,0 +1,21 @@
+# فایل‌های آپلودی و داده‌های پنل
+/storage/files/*
+/storage/tmp/*
+/storage/data/*
+!/storage/.gitignore
+!/storage/.htaccess
+!/storage/index.html
+
+# فایل‌های سیستمی و موقت
+*.log
+*.lock
+*.part
+*.building
+*.tmp
+.DS_Store
+Thumbs.db
+
+# تنظیمات محلی ادیتور
+.idea/
+.vscode/
+*.swp
