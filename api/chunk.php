@@ -30,6 +30,14 @@ if ($index >= (int) $meta['chunks']) {
     json_fail('شماره‌ی تکه خارج از محدوده است.');
 }
 
+// اگر بدنه‌ی درخواست از post_max_size بزرگ‌تر باشد، PHP آن را نصفه تحویل می‌دهد؛
+// پس بهتر است همان اول ۴۱۳ برگردانیم تا مرورگر خودش تکه را کوچک‌تر کند.
+$postMax = (int) server_limits()['post_max_size'];
+$declaredTotal = isset($_SERVER['CONTENT_LENGTH']) ? (int) $_SERVER['CONTENT_LENGTH'] : 0;
+if ($postMax > 0 && $declaredTotal > $postMax) {
+    json_fail('حجم تکه از سقف مجاز سرور بیشتر است؛ با تکه‌های کوچک‌تر تلاش می‌کنیم.', 413, ['shrink' => true]);
+}
+
 $dir = session_dir($uploadId);
 if (!is_dir($dir) && !@mkdir($dir, 0775, true)) {
     json_fail('پوشه‌ی موقت قابل نوشتن نیست.', 500);

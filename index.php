@@ -14,8 +14,14 @@ $accent  = (string) cfg('accent', '#6c5ce7');
 $accent2 = (string) cfg('accent2', '#00d2ff');
 $accent3 = (string) cfg('accent3', '#ff5e9c');
 
+// پیام فلاش (وقتی کاربر بدون جاوااسکریپت آپلود می‌کند به اینجا ریدایرکت می‌شود)
+// نکته‌ی امنیتی: این مقدار از آدرس می‌آید، پس کوتاه و پاک‌سازی می‌شود.
 $flashMsg = isset($_GET['msg']) ? (string) $_GET['msg'] : '';
-$flashType = isset($_GET['up']) ? (string) $_GET['up'] : 'info';
+$flashMsg = mb_substr(str_replace(["\r", "\n", "\t"], ' ', $flashMsg), 0, 240, 'UTF-8');
+$flashType = isset($_GET['up']) ? strtolower((string) $_GET['up']) : 'info';
+if (!in_array($flashType, ['info', 'ok', 'error', 'warn'], true)) {
+    $flashType = 'info';
+}
 
 /** آیکون بر اساس نوع فایل */
 function file_kind(string $mime, string $ext): string
@@ -265,7 +271,8 @@ window.UPLOAD_PANEL = <?= json_encode([
     'recentLimit' => (int) cfg('recent_limit', 12),
     'allowDelete' => (bool) cfg('allow_delete', true),
     'flash'       => ['type' => $flashType, 'message' => $flashMsg],
-], JSON_UNESCAPED_UNICODE | JSON_UNESCAPED_SLASHES) ?>;
+    // JSON_HEX_* : جلوگیری از بستن تگ <script> با مقدارهای ورودی (ضد XSS)
+], JSON_UNESCAPED_UNICODE | JSON_UNESCAPED_SLASHES | JSON_HEX_TAG | JSON_HEX_AMP | JSON_HEX_APOS | JSON_HEX_QUOT) ?>;
 </script>
 <script src="<?= htmlspecialchars(asset('assets/app.js'), ENT_QUOTES) ?>" defer></script>
 </body>

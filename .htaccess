@@ -57,6 +57,20 @@ DirectoryIndex index.php index.html
     Header set Referrer-Policy "no-referrer-when-downgrade"
 </IfModule>
 
+# اخطارها داخل پاسخ‌های JSON چاپ نشوند (به لاگ سرور می‌روند)
+<IfModule mod_php.c>
+    php_flag display_errors Off
+    php_value max_input_vars 10000
+</IfModule>
+<IfModule mod_php7.c>
+    php_flag display_errors Off
+    php_value max_input_vars 10000
+</IfModule>
+<IfModule mod_php8.c>
+    php_flag display_errors Off
+    php_value max_input_vars 10000
+</IfModule>
+
 # جلوگیری از اجرای فایل‌های غیرمجاز در ریشه‌ی پروژه
 <FilesMatch "\.(json|log|lock|part|building|bak|ini|md)$">
     <IfModule mod_authz_core.c>

@@ -22,6 +22,17 @@ function redirect_with_message(string $type, string $message): void
 
 $isXhr = (($_SERVER['HTTP_X_REQUESTED_WITH'] ?? '') === 'XMLHttpRequest') || (($_GET['json'] ?? '') === '1');
 
+// اگر حجم کل درخواست از post_max_size بیشتر باشد، PHP آن را دور می‌ریزد و
+// $_FILES خالی می‌ماند. اینجا پیام واضح می‌دهیم تا کاربر بداند مشکل چیست.
+$declaredTotal = isset($_SERVER['CONTENT_LENGTH']) ? (int) $_SERVER['CONTENT_LENGTH'] : 0;
+$postMax = (int) server_limits()['post_max_size'];
+if ($declaredTotal > 0 && $postMax > 0 && $declaredTotal > $postMax) {
+    $tooBig = 'حجم درخواست (' . human_size($declaredTotal) . ') از سقف مجاز سرور ('
+        . human_size($postMax) . ') بیشتر است. از حالت آپلود تکه‌تکه‌ی پنل استفاده کن یا '
+        . 'post_max_size را در php.ini بالا ببر.';
+    $isXhr ? json_fail($tooBig, 413) : redirect_with_message('error', $tooBig);
+}
+
 $files = $_FILES['file'] ?? $_FILES['files'] ?? null;
 if (!$files || !isset($files['name'])) {
     $isXhr ? json_fail('فایلی ارسال نشد.')

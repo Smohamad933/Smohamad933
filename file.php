@@ -137,11 +137,14 @@ $dlUrl    = $url . (str_contains($url, '?') ? '&' : '?') . 'dl=1';
 
 <script>
 window.FILE_DATA = {
-    id: <?= json_encode($f['id']) ?>,
-    url: <?= json_encode($url) ?>,
-    pageUrl: <?= json_encode(file_page_url($f)) ?>
+    id: <?= json_encode($f['id'], JSON_HEX_TAG | JSON_HEX_AMP | JSON_HEX_APOS | JSON_HEX_QUOT) ?>,
+    url: <?= json_encode($url, JSON_HEX_TAG | JSON_HEX_AMP | JSON_HEX_APOS | JSON_HEX_QUOT) ?>,
+    pageUrl: <?= json_encode(file_page_url($f), JSON_HEX_TAG | JSON_HEX_AMP | JSON_HEX_APOS | JSON_HEX_QUOT) ?>
 };
-window.UPLOAD_PANEL = { urls: { delete: <?= json_encode(base_url() . '/api/delete.php') ?> }, flash: {} };
+window.UPLOAD_PANEL = {
+    urls: { delete: <?= json_encode(base_url() . '/api/delete.php', JSON_HEX_TAG | JSON_HEX_AMP | JSON_HEX_APOS | JSON_HEX_QUOT) ?> },
+    flash: {}
+};
 </script>
 <script>
 (function () {
@@ -149,7 +152,13 @@ window.UPLOAD_PANEL = { urls: { delete: <?= json_encode(base_url() . '/api/delet
     function toast(msg, type) {
         var t = document.createElement('div');
         t.className = 'toast ' + (type || 'info');
-        t.innerHTML = '<span class="t-icon">✓</span><span>' + msg + '</span>';
+        var icon = document.createElement('span');
+        icon.className = 't-icon';
+        icon.textContent = '✓';
+        var text = document.createElement('span');
+        text.textContent = msg == null ? '' : String(msg);   // متن همیشه به‌صورت متن، نه HTML
+        t.appendChild(icon);
+        t.appendChild(text);
         toastBox.appendChild(t);
         setTimeout(function () { t.classList.add('out'); setTimeout(function () { t.remove(); }, 380); }, 2800);
     }
@@ -190,7 +199,7 @@ window.UPLOAD_PANEL = { urls: { delete: <?= json_encode(base_url() . '/api/delet
             }).then(function (r) { return r.json(); }).then(function (j) {
                 if (j.ok) {
                     toast('فایل حذف شد', 'ok');
-                    setTimeout(function () { location.href = <?= json_encode(base_url() . '/') ?>; }, 900);
+                    setTimeout(function () { location.href = <?= json_encode(base_url() . '/', JSON_HEX_TAG | JSON_HEX_AMP | JSON_HEX_APOS | JSON_HEX_QUOT) ?>; }, 900);
                 } else {
                     toast(j.error || 'حذف ناموفق بود', 'err');
                 }

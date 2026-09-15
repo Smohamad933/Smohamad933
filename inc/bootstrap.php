@@ -10,6 +10,45 @@ ini_set('display_errors', '0');
 ini_set('log_errors', '1');
 date_default_timezone_set('Asia/Tehran');
 
+/* ------------------------------------------------------------------
+ | سازگاری با هاست‌های قدیمی‌تر (PHP 7.4) و هاست‌هایی که mbstring ندارند
+ | این توابع در PHP 8 و با افزونه‌ی mbstring وجود دارند؛ اینجا فقط اگر
+ | نبودند، جایگزین ساده‌شان ساخته می‌شود.
+ * ----------------------------------------------------------------*/
+if (!function_exists('str_contains')) {
+    function str_contains(string $haystack, string $needle): bool
+    {
+        return $needle === '' || strpos($haystack, $needle) !== false;
+    }
+}
+if (!function_exists('str_starts_with')) {
+    function str_starts_with(string $haystack, string $needle): bool
+    {
+        return strncmp($haystack, $needle, strlen($needle)) === 0;
+    }
+}
+if (!function_exists('str_ends_with')) {
+    function str_ends_with(string $haystack, string $needle): bool
+    {
+        return $needle === '' || substr($haystack, -strlen($needle)) === $needle;
+    }
+}
+if (!function_exists('mb_strlen')) {
+    function mb_strlen($string, $encoding = null) { return strlen((string) $string); }
+}
+if (!function_exists('mb_substr')) {
+    function mb_substr($string, $start, $length = null, $encoding = null)
+    {
+        return $length === null ? substr((string) $string, $start) : substr((string) $string, $start, $length);
+    }
+}
+if (!function_exists('mb_strtoupper')) {
+    function mb_strtoupper($string, $encoding = null) { return strtoupper((string) $string); }
+}
+if (!function_exists('mb_strtolower')) {
+    function mb_strtolower($string, $encoding = null) { return strtolower((string) $string); }
+}
+
 define('APP_ROOT', dirname(__DIR__));
 define('APP_VERSION', '1.0.0');
 

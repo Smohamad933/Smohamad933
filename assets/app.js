@@ -56,8 +56,21 @@
             return { '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;' }[c];
         });
     }
-    function store(key, val) {
-        try {
+    /**
+     * خواندن امن JSON از پاسخ سرور.
+     * بعضی هاست‌ها قبل از JSON یک اخطار PHP چاپ می‌کنند (مثلا وقتی حجم درخواست از
+     * post_max_size بیشتر است)؛ در آن حالت هم باید بتوانیم پیام اصلی را بخوانیم.
+     */
+    function parseJSON(text) {
+        if (typeof text !== 'string' || text === '') return null;
+        try { return JSON.parse(text); } catch (e) { /* شاید متن اضافی قبلش باشد */ }
+        var s = text.indexOf('{'), t = text.lastIndexOf('}');
+        if (s > -1 && t > s) {
+            try { return JSON.parse(text.slice(s, t + 1)); } catch (e2) { /* بی‌فایده */ }
+        }
+        return null;
+    }
+    function store(key, val) {        try {
             if (val === undefined) {
                 var raw = localStorage.getItem(key);
                 return raw ? JSON.parse(raw) : {};
@@ -139,9 +152,13 @@
             body: JSON.stringify(data || {}),
             credentials: 'same-origin'
         }).then(function (r) {
-            return r.json().catch(function () {
-                throw new Error('پاسخ نامعتبر از سرور (' + r.status + ')');
-            }).then(function (j) {
+            return r.text().then(function (text) {
+                var j = parseJSON(text);
+                if (!j) {
+                    var bad = new Error('پاسخ نامعتبر از سرور (' + r.status + ')');
+                    bad.status = r.status;
+                    throw bad;
+                }
                 if (!r.ok || j.ok === false) {
                     var err = new Error(j.error || ('خطای سرور ' + r.status));
                     err.status = r.status;
@@ -166,8 +183,7 @@
                 if (e.lengthComputable && onProgress) onProgress(e.loaded);
             };
             xhr.onload = function () {
-                var j = null;
-                try { j = JSON.parse(xhr.responseText); } catch (e) { }
+                var j = parseJSON(xhr.responseText);
                 if (xhr.status >= 200 && xhr.status < 300 && j && j.ok) {
                     return resolve(j);
                 }
@@ -510,7 +526,8 @@
                     return initSession(item).then(step);
                 }
                 // تکه برای تنظیمات سرور بزرگ است → کوچک‌ترش کن
-                if (err.status === 413 || (err.status === 400 && item.chunkSize > CHUNK_MIN)) {
+                if (err.status === 413 || (err.payload && err.payload.shrink)
+                    || (err.status === 400 && item.chunkSize > CHUNK_MIN)) {
                     shrinkChunk(item, 'اندازه‌ی تکه برای سرور بزرگ بود؛ تکه‌های کوچک‌تر…');
                     return initSession(item).then(step);
                 }

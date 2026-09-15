@@ -40,9 +40,9 @@ $forceDownload = isset($_GET['dl']) && $_GET['dl'] !== '0';
 $forceView     = isset($_GET['view']) && $_GET['view'] !== '0';
 $inline = $forceView ? is_inline_mime($mime) : (is_inline_mime($mime) && !$forceDownload);
 
-// شمارش دانلود (فقط دانلود کامل، نه هر درخواست Range)
+// شمارش دانلود (فقط دانلود واقعی: نه درخواست Range و نه پیش‌نمایش درون‌صفحه)
 $isRange = isset($_SERVER['HTTP_RANGE']);
-if (!$isRange) {
+if (!$isRange && !$forceView) {
     db_mutate(function (array &$db) use ($id) {
         if (isset($db['files'][$id])) {
             $db['files'][$id]['downloads'] = (int) ($db['files'][$id]['downloads'] ?? 0) + 1;
@@ -68,18 +68,29 @@ header(
     . '; filename="' . $asciiFallback . '"'
     . "; filename*=UTF-8''" . rawurlencode($name)
 );
-header('Content-Length: ' . $size);
 
-// درخواست‌های شرطی
+// درخواست‌های شرطی (کش سمت مرورگر)
 $etag = '"' . md5($id . $size . ($f['uploaded'] ?? 0)) . '"';
-if (($_SERVER['HTTP_IF_NONE_MATCH'] ?? '') === $etag) {
+$notModified = ($_SERVER['HTTP_IF_NONE_MATCH'] ?? '') === $etag;
+if (!$notModified && isset($_SERVER['HTTP_IF_MODIFIED_SINCE'])) {
+    $since = @strtotime((string) $_SERVER['HTTP_IF_MODIFIED_SINCE']);
+    $mtime = (int) ($f['uploaded'] ?? 0);
+    if ($since !== false && $mtime > 0 && $mtime <= $since) {
+        $notModified = true;
+    }
+}
+if ($notModified) {
+    // پاسخ ۳۰۴ نه بدنه دارد و نه Content-Length
     http_response_code(304);
     exit;
 }
 
 // مدیریت Range
+// نکته: Content-Length فقط جایی ست می‌شود که واقعاً بدنه داریم (۲۰۰ یا ۲۰۶)
+// تا پاسخ‌های ۳۰۴/۴۱۶ استاندارد بمانند.
 $start = 0;
 $end   = $size - 1;
+$partial = false;
 if ($isRange && preg_match('/bytes=(\d*)-(\d*)/i', (string) $_SERVER['HTTP_RANGE'], $m)) {
     $from = $m[1] === '' ? null : (int) $m[1];
     $to   = $m[2] === '' ? null : (int) $m[2];
@@ -92,15 +103,15 @@ if ($isRange && preg_match('/bytes=(\d*)-(\d*)/i', (string) $_SERVER['HTTP_RANGE
     }
     if ($start > $end || $start >= $size) {
         http_response_code(416);
-        header_remove('Content-Length');
         header('Content-Range: bytes */' . $size);
         header('Content-Length: 0');
         exit;
     }
+    $partial = true;
     http_response_code(206);
     header('Content-Range: bytes ' . $start . '-' . $end . '/' . $size);
-    header('Content-Length: ' . ($end - $start + 1));
 }
+header('Content-Length: ' . ($partial ? ($end - $start + 1) : $size));
 
 // ارسال خروجی به‌صورت تکه‌ای (حافظه‌ی کم)
 while (ob_get_level() > 0) {
